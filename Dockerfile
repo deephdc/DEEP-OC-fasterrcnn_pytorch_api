@@ -79,7 +79,11 @@ RUN if [ "$jlab" = true ]; then \
 RUN git clone -b $branch https://github.com/falibabaei//fasterrcnn_pytorch_api && \
     cd  fasterrcnn_pytorch_api && \
     pip3 install --no-cache-dir -e . && \
-    cd ..
+    git submodule init  && \
+    git submodule update  && \
+    cd fasterrcnn_pytorch_training_pipeline && \
+    pip3 install --no-cache-dir -e . && \
+    cd ../..
 
 # Open ports: DEEPaaS (5000), Monitoring (6006), Jupyter (8888)
 EXPOSE 5000 6006 8888
