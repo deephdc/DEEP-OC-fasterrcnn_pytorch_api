@@ -11,7 +11,7 @@
 # [!] Note: For the Jenkins CI/CD pipeline, input args are defined inside the
 # Jenkinsfile, not here!
 
-ARG tag=2.9.1
+ARG tag=1.13.1-cuda11.6-cudnn8-runtime
 
 # Base image, e.g. tensorflow/tensorflow:2.9.1
 FROM pytorch/pytorch:${tag}
@@ -34,6 +34,12 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
         git \
         curl \
         nano \
+       libsm6\
+        libxext6\
+         ffmpeg\
+          libfontconfig1\
+           libxrender1\
+            libgl1-mesa-glx\
     && rm -rf /var/lib/apt/lists/*
 
 # Update python packages
@@ -79,10 +85,11 @@ RUN if [ "$jlab" = true ]; then \
 RUN git clone -b $branch https://github.com/falibabaei//fasterrcnn_pytorch_api && \
     cd  fasterrcnn_pytorch_api && \
     pip3 install --no-cache-dir -e . && \
-    git submodule init  && \
-    git submodule update  && \
+    pip3 install vision-transformers && \
+    git submodule init && \
+    git submodule update && \
     cd fasterrcnn_pytorch_training_pipeline && \
-    pip3 install --no-cache-dir -e . && \
+    pip3 install -e . && \
     cd ../..
 
 # Open ports: DEEPaaS (5000), Monitoring (6006), Jupyter (8888)
