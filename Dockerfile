@@ -82,7 +82,7 @@ RUN if [ "$jlab" = true ]; then \
     else echo "[INFO] Skip JupyterLab installation!"; fi
 
 # Install user app
-RUN git clone -b $branch https://github.com/falibabaei//fasterrcnn_pytorch_api && \
+RUN git clone -b $branch https://git.scc.kit.edu/m-team/ai/fasterrcnn_pytorch_api.git && \
     cd  fasterrcnn_pytorch_api && \
     pip3 install --no-cache-dir -e . && \
     pip3 install vision-transformers && \
