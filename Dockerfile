@@ -91,7 +91,15 @@ RUN git clone -b $branch https://git.scc.kit.edu/m-team/ai/fasterrcnn_pytorch_ap
     cd fasterrcnn_pytorch_training_pipeline && \
     pip3 install -e . && \
     cd ../..
+ENV SWIFT_CONTANER https://data-deep.a.incd.pt/index.php/s/4q49kPP6DyMW23P/download
+ENV MODEL_TAR 2023-05-10_121810.zip
 
+RUN curl --insecure -o ./fasterrcnn_pytorch_api/models/${MODEL_TAR} \
+    ${SWIFT_CONTANER}/${MODEL_TAR}
+RUN  cd     fasterrcnn_pytorch_api/models && \
+     unzip ${MODEL_TAR} && \
+     rm ${MODEL_TAR}
+     
 # Open ports: DEEPaaS (5000), Monitoring (6006), Jupyter (8888)
 EXPOSE 5000 6006 8888
 
