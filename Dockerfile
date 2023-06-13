@@ -84,13 +84,12 @@ RUN if [ "$jlab" = true ]; then \
 # Install user app
 RUN git clone -b $branch https://git.scc.kit.edu/m-team/ai/fasterrcnn_pytorch_api.git && \
     cd  fasterrcnn_pytorch_api && \
-    pip3 install --no-cache-dir -e . && \
-    pip3 install vision-transformers && \
     git submodule init && \
     git submodule update && \
-    cd fasterrcnn_pytorch_training_pipeline && \
-    pip3 install -e . && \
-    cd ../..
+    pip3 install --no-cache-dir -e ./fasterrcnn_pytorch_training_pipeline && \
+    pip3 install --no-cache-dir -e . && \
+    cd .. 
+    
 ENV SWIFT_CONTANER https://data-deep.a.incd.pt/index.php/s/4q49kPP6DyMW23P/download
 ENV MODEL_TAR 2023-05-10_121810.zip
 
