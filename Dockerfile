@@ -34,12 +34,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
         git \
         curl \
         nano \
-       libsm6\
-        libxext6\
-         ffmpeg\
-          libfontconfig1\
-           libxrender1\
-            libgl1-mesa-glx\
+        unzip\
+        libgl1\
     && rm -rf /var/lib/apt/lists/*
 
 # Update python packages
@@ -82,9 +78,9 @@ RUN if [ "$jlab" = true ]; then \
     else echo "[INFO] Skip JupyterLab installation!"; fi
 
 # Install user app
-RUN git clone -b $branch https://git.scc.kit.edu/m-team/ai/fasterrcnn_pytorch_api.git && \
+RUN git clone --depth 1 -b $branch https://git.scc.kit.edu/m-team/ai/fasterrcnn_pytorch_api.git && \
     cd  fasterrcnn_pytorch_api && \
-    git submodule init && \
+    git submodule init && \  
     git submodule update --remote --merge  && \
     pip3 install --no-cache-dir -e ./fasterrcnn_pytorch_training_pipeline && \
     pip3 install --no-cache-dir -e . && \
@@ -103,5 +99,4 @@ RUN curl --insecure -o ./fasterrcnn_pytorch_api/models/${MODEL_TAR} \
 EXPOSE 5000 6006 8888
 
 # Launch deepaas
-ENTRYPOINT [ "deepaas-run" ]
-CMD ["--listen-ip", "0.0.0.0", "--listen-port", "5000"]
+CMD [ "deepaas-run", "--listen-ip", "0.0.0.0", "--listen-port", "5000"]
