@@ -23,9 +23,6 @@ LABEL version='0.0.1'
 # What user branch to clone [!]
 ARG branch=master
 
-# If to install JupyterLab
-ARG jlab=true
-
 # Install Ubuntu packages
 # - gcc is needed in Pytorch images because deepaas installation might break otherwise (see docs) (it is already installed in tensorflow images)
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
@@ -36,6 +33,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
         nano \
         unzip\
         libgl1\
+        libglib2.0-0\
     && rm -rf /var/lib/apt/lists/*
 
 # Update python packages
@@ -52,7 +50,7 @@ ENV LANG C.UTF-8
 # Set the working directory
 WORKDIR /srv
 
-# Install rclone (needed if syncing with NextCloud for training; otherwise remove)
+# Install rclone (needed if syncing with NextCloud; otherwise remove)
 RUN curl -O https://downloads.rclone.org/rclone-current-linux-amd64.deb && \
     dpkg -i rclone-current-linux-amd64.deb && \
     apt install -f && \
@@ -64,36 +62,21 @@ RUN curl -O https://downloads.rclone.org/rclone-current-linux-amd64.deb && \
 ENV RCLONE_CONFIG=/srv/.rclone/rclone.conf
 
 # Initialization scripts
+# deep-start can install JupyterLab or VSCode if requested
 RUN git clone https://github.com/deephdc/deep-start /srv/.deep-start && \
-    ln -s /srv/.deep-start/deep-start.sh /usr/local/bin/deep-start && \
-    ln -s /srv/.deep-start/run_jupyter.sh /usr/local/bin/run_jupyter
+    ln -s /srv/.deep-start/deep-start.sh /usr/local/bin/deep-start
 
-# Install JupyterLab
-ENV JUPYTER_CONFIG_DIR /srv/.deep-start/
 # Necessary for the Jupyter Lab terminal
 ENV SHELL /bin/bash
-RUN if [ "$jlab" = true ]; then \
-       # by default has to work (1.2.0 wrongly required nodejs and npm)
-       pip3 install --no-cache-dir jupyterlab ; \
-    else echo "[INFO] Skip JupyterLab installation!"; fi
 
 # Install user app
-RUN git clone --depth 1 -b $branch https://git.scc.kit.edu/m-team/ai/fasterrcnn_pytorch_api.git && \
+RUN git clone --depth 1 -b $branch https://github.com/deephdc/fasterrcnn_pytorch_api.git && \
     cd  fasterrcnn_pytorch_api && \
     git submodule init && \  
     git submodule update --remote --merge  && \
     pip3 install --no-cache-dir -e ./fasterrcnn_pytorch_training_pipeline && \
     pip3 install --no-cache-dir -e . && \
-    cd .. 
-    
-ENV SWIFT_CONTANER https://data-deep.a.incd.pt/index.php/s/4q49kPP6DyMW23P/download
-ENV MODEL_TAR 2023-05-10_121810.zip
-
-RUN curl --insecure -o ./fasterrcnn_pytorch_api/models/${MODEL_TAR} \
-    ${SWIFT_CONTANER}/${MODEL_TAR} && \
-    cd  fasterrcnn_pytorch_api/models && \
-    unzip ${MODEL_TAR} && \
-    rm ${MODEL_TAR}
+    cd ..
      
 # Open ports: DEEPaaS (5000), Monitoring (6006), Jupyter (8888)
 EXPOSE 5000 6006 8888
