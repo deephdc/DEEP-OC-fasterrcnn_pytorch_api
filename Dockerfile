@@ -69,6 +69,12 @@ RUN git clone https://github.com/deephdc/deep-start /srv/.deep-start && \
 # Necessary for the Jupyter Lab terminal
 ENV SHELL /bin/bash
 
+# Install currently exp version of deepaas:
+RUN git clone --depth 1 -b update_cli https://github.com/indigo-dc/DEEPaaS.git && \
+    cd DEEPaaS && \
+    pip3 install --no-cache-dir -e . &&\
+    cd ..
+
 # Install user app
 RUN git clone --depth 1 -b $branch https://github.com/deephdc/fasterrcnn_pytorch_api.git && \
     cd  fasterrcnn_pytorch_api && \
