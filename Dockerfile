@@ -21,8 +21,7 @@ LABEL version='0.0.1'
 # Object detection using FasterRCNN model
 
 # What user branch to clone [!]
-ARG branch=master
-
+ARG branch=test
 # If to install JupyterLab
 ARG jlab=true
 
