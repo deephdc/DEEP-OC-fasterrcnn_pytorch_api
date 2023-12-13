@@ -79,10 +79,10 @@ RUN git clone --depth 1 -b $branch https://github.com/deephdc/fasterrcnn_pytorch
     cd ..
 
 # Install currently exp version of deepaas (after the app!):
-RUN git clone --depth 1 -b update_cli https://github.com/indigo-dc/DEEPaaS.git && \
-    cd DEEPaaS && \
-    pip3 install --no-cache-dir -e . &&\
-    cd ..
+#RUN git clone --depth 1 -b update_cli https://github.com/indigo-dc/DEEPaaS.git && \
+#    cd DEEPaaS && \
+#    pip3 install --no-cache-dir -e . &&\
+#    cd ..
      
 # Open ports: DEEPaaS (5000), Monitoring (6006), Jupyter (8888)
 EXPOSE 5000 6006 8888
